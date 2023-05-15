@@ -61,24 +61,36 @@ class Item:
         Устанавливает сеттер для названия товара с проверкой на кол-во символов.
         """
         if len(name) > 10:
-            print("Длина наименования товара превышает 10 символов.")
+            raise ValueError("Длина наименования товара превышает 10 символов.")
         else:
             self.__name = name
 
     @classmethod
-    def instantiate_from_csv(cls):
+    def instantiate_from_csv(cls, file_path='../src/items.csv'):
         """
         Инициализирует объекты класса из списка.
         """
-        with open('../src/items.csv', 'r', encoding='cp1251') as file:
-            csv_reader = csv.DictReader(file)
-            cls.all.clear()
-            new_list = list(csv_reader)
-            for i in range(len(new_list)):
-                name = new_list[i]["name"]
-                price = float(new_list[i]["price"])
-                quantity = int(new_list[i]["quantity"])
-                cls(name, price, quantity)
+        required_columns = ['name', 'price', 'quantity']
+        try:
+            open(file_path)
+        except FileNotFoundError:
+            raise FileNotFoundError("Отсутствует файл items.csv")
+        else:
+            with open(file_path, 'r', encoding='cp1251') as file:
+                csv_reader = csv.DictReader(file)
+                headers = csv_reader.fieldnames
+
+                for column in required_columns:
+                    if column not in headers:
+                        raise InstantiateCSVError
+
+                cls.all.clear()
+                new_list = list(csv_reader)
+                for i in range(len(new_list)):
+                    name = new_list[i]["name"]
+                    price = float(new_list[i]["price"])
+                    quantity = int(new_list[i]["quantity"])
+                    cls(name, price, quantity)
 
     @staticmethod
     def string_to_number(string):
@@ -92,3 +104,13 @@ class Item:
         else:
             string_int = int(string)
             return string_int
+
+
+class InstantiateCSVError(Exception):
+    """Выводит ошибку при поврежденном файле"""
+
+    def __init__(self, *args, **kwargs):
+        self.message = args[0] if args else 'Файл items.csv поврежден'
+
+    def __str__(self):
+        return self.message

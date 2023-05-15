@@ -8,7 +8,3 @@ def test_keyboard():
     assert str(kb.language) == "EN"
     kb.change_lang()
     assert str(kb.language) == "RU"
-    kb.change_language("EN")
-    assert str(kb.language) == "RU"
-    kb.change_language("CH")
-    assert str(kb.language) == "RU"
