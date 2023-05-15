@@ -15,14 +15,7 @@ class MixinLog:
 
 
 class Keyboard(Item, MixinLog):
-    def __init__(self, name: str, price: float, quantity: int, language="EN"):
-        self.__language = language
+    def __init__(self, name: str, price: float, quantity: int):
         super().__init__(name, price, quantity)
         MixinLog.__init__(self)
 
-    def change_language(self):
-        if self.__language == "EN":
-            self.__language = "RU"
-        else:
-            self.__language = "EN"
-        return self
